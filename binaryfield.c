@@ -7,20 +7,25 @@
     {                                                                                  \
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000 \
     }
+#define printd(C)           \
+    for (i = 0; i < T; i++) \
+        printf("%llx \t", C[i]);
 
 typedef unsigned long long poly;
 poly *polyadd(poly *A, poly *B);
 poly *polymult(poly *A, poly *B);
-poly *trunc(poly *C, int j);
+poly *truncate(poly *C, int j);
+poly *inflate(poly *C, poly *Ct, int j);
 
 int main()
 {
+    int i;
     poly *pC;
-    poly A[] = {0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000025};
-    poly B[] = {0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000017};
-    pC = polymult(A, B);
-    printf("%llu", pC[3]);
-
+    poly A[] = {0x0000000000000001, 0x0000000000000002, 0x0000000000000004, 0x0000000000000006};
+    poly B[] = {0x0000000000000000, 0x0000000000000001, 0x0000000000000002, 0x0000000000000005};
+    // pC = polymult(A, B);
+    // printd(B);
+    printd(inflate(A, truncate(A, 2), 2));
     return 0;
 }
 
@@ -36,26 +41,41 @@ poly *polyadd(poly *A, poly *B)
 
 poly *polymult(poly *A, poly *B)
 {
-    int k, j;
+    int k, j, i;
+    poly *pC;
     static poly C[T] = EMPTY;
+    pC = C;
 
     for (k = 0; k < WORDSIZE; k++)
     {
-        for (j = 0; j < T - 1; j++)
+        for (j = 0; j < T; j++)
             if ((*(A + j) >> k) % 2 == 1)
-                polyadd(trunc(C, j), B);
+                pC = inflate(pC, polyadd(truncate(pC, j), B), j);
         if (k != WORDSIZE - 1)
-            *B << 1;
+            for (j = 0; j < T; j++)
+                *(B + j) <<= 1;
     }
-    return C;
+    return pC;
 }
 
-poly *trunc(poly *C, int j)
+poly *truncate(poly *C, int j)
 {
     int i;
     static poly TC[T] = EMPTY;
 
-    for (i = T; i >= j; i--)
-        TC[i - j] = *(C + i);
+    for (i = 0; i < T - j; i++)
+        TC[i + j] = *(C + i);
     return TC;
+}
+
+poly *inflate(poly *C, poly *Ct, int j)
+{
+    int i;
+    static poly IC[T] = EMPTY;
+
+    for (i = 0; i < j; i++)
+        IC[i] = Ct[(T)-j + i];
+    for (i = j; i < T; i++)
+        IC[i] = C[i];
+    return (IC);
 }
