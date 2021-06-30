@@ -7,25 +7,29 @@
     {                                                                                  \
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000 \
     }
-#define printd(C)           \
-    for (i = 0; i < T; i++) \
-        printf("%llx \t", C[i]);
+#define printd(C)                     \
+    for (i = 0; i < T; i++)           \
+        printf("%llx \t", C[i] >> 1); \
+    printf("\n");
 
 typedef unsigned long long poly;
 poly *polyadd(poly *A, poly *B);
 poly *polymult(poly *A, poly *B);
 poly *truncate(poly *C, int j);
 poly *inflate(poly *C, poly *Ct, int j);
+poly *leftshift(poly *C, int pow);
 
 int main()
 {
     int i;
     poly *pC;
-    poly A[] = {0x0000000000000001, 0x0000000000000002, 0x0000000000000004, 0x0000000000000006};
-    poly B[] = {0x0000000000000000, 0x0000000000000001, 0x0000000000000002, 0x0000000000000005};
-    // pC = polymult(A, B);
-    // printd(B);
-    printd(inflate(A, truncate(A, 2), 2));
+    poly A[] = {0x000000000000020A, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000};
+    poly B[] = {0x0000000000003011, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000};
+    pC = polymult(A, B);
+    // printf("%llx", leftshift(1));
+    printd(pC);
+    // printd(inflate(A, truncate(A, 2), 2));
+    // printd(truncate(A, 3));
     return 0;
 }
 
@@ -43,17 +47,20 @@ poly *polymult(poly *A, poly *B)
 {
     int k, j, i;
     poly *pC;
-    static poly C[T] = EMPTY;
+    static poly C[T];
+    for (i = 0; i < T; i++)
+        C[i] = 0;
     pC = C;
 
     for (k = 0; k < WORDSIZE; k++)
     {
         for (j = 0; j < T; j++)
-            if ((*(A + j) >> k) % 2 == 1)
-                pC = inflate(pC, polyadd(truncate(pC, j), B), j);
-        if (k != WORDSIZE - 1)
+            if ((*(A + j) >> (k - 1)) % 2 == 1)
+                pC = polyadd(truncate(pC, j), B);
+        if (k < (WORDSIZE - 1))
             for (j = 0; j < T; j++)
                 *(B + j) <<= 1;
+        // *pC <<= 1;
     }
     return pC;
 }
@@ -61,21 +68,19 @@ poly *polymult(poly *A, poly *B)
 poly *truncate(poly *C, int j)
 {
     int i;
-    static poly TC[T] = EMPTY;
+    static poly TC[T];
 
-    for (i = 0; i < T - j; i++)
-        TC[i + j] = *(C + i);
+    for (i = 0; i < j; i++)
+        TC[i] = 0;
+    for (i = j; i < T; i++)
+        TC[i] = *(C + i);
     return TC;
 }
 
-poly *inflate(poly *C, poly *Ct, int j)
-{
-    int i;
-    static poly IC[T] = EMPTY;
-
-    for (i = 0; i < j; i++)
-        IC[i] = Ct[(T)-j + i];
-    for (i = j; i < T; i++)
-        IC[i] = C[i];
-    return (IC);
-}
+// poly *leftshift(poly *C, int pow)
+// {
+//     int j;
+//     poly test = 0x8000000000000000;
+//     test <<= pow;
+//     return test;
+// }
