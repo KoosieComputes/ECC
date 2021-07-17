@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <gmp.h>
 #define WORDSIZE 64
 #define M 233
 #define T 4
@@ -7,12 +8,12 @@
     {                                                                                  \
         0x0000000000000000, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000 \
     }
-#define printd(C)                     \
-    for (i = 0; i < T; i++)           \
-        printf("%llx \t", C[i] >> 1); \
+#define printd(C)               \
+    for (i = 0; i < T; i++)     \
+        printf("%lx \t", C[i]); \
     printf("\n");
 
-typedef unsigned long long poly;
+typedef unsigned long poly;
 poly *polyadd(poly *A, poly *B);
 poly *polymult(poly *A, poly *B);
 poly *truncate(poly *C, int j);
@@ -26,6 +27,7 @@ int main()
     poly A[] = {0x000000000000020A, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000};
     poly B[] = {0x0000000000003011, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000};
     pC = polymult(A, B);
+    unsigned long test;
     // printf("%llx", leftshift(1));
     printd(pC);
     // printd(inflate(A, truncate(A, 2), 2));
@@ -45,7 +47,7 @@ poly *polyadd(poly *A, poly *B)
 
 poly *polymult(poly *A, poly *B)
 {
-    int k, j, i;
+    int k, j, i, r;
     poly *pC;
     static poly C[T];
     for (i = 0; i < T; i++)
@@ -58,9 +60,7 @@ poly *polymult(poly *A, poly *B)
             if ((*(A + j) >> (k - 1)) % 2 == 1)
                 pC = polyadd(truncate(pC, j), B);
         if (k < (WORDSIZE - 1))
-            for (j = 0; j < T; j++)
-                *(B + j) <<= 1;
-        // *pC <<= 1;
+            r = mpn_lshift(B, B, 4, 1);
     }
     return pC;
 }
