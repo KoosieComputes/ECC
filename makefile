@@ -1,10 +1,10 @@
 CC=gcc
-CFLAGS=-I.
-DEPS = pflib.h
-OBJ= main.o pflib.o
+CFLAGS=-lgmp -I.
+DEPS = bflib.h
+OBJ= main.o bflib.o
 
 %.o: %.c $(DEPS)
-	@-$(CC) -c -o $@ $< $(CFLAGS)
+	@-$(CC) -c -o $@ $< 
 
 all: $(OBJ)
 	@-$(CC) -o $@ $^ $(CFLAGS)
