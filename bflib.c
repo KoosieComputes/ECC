@@ -94,13 +94,15 @@ void reduce(poly *A)
 
 poly *polydivide(poly *A, poly *B)
 {
-    poly *f = RPOLY;
-    poly *v = RPOLY;
+    poly f[] = RPOLY;
+    poly zero[] = EMPTY;
+    poly one[] = {1, 0, 0, 0};
+    poly *v = f;
     poly *u = copyPoly(A, 4, '0');
     poly *g1 = copyPoly(B, 4, '0');
-    poly *g2 = {0, 0, 0, 0};
+    poly *g2 = zero;
 
-    while (!(isequal(u, {1, 0, 0, 0})) && !(isequal(v, {1, 0, 0, 0})))
+    while (!(isequal(u, one, 4)) && !(isequal(v, one, 4)))
     {
         while (u[0] % 2 == 0)
         {
@@ -130,17 +132,9 @@ poly *polydivide(poly *A, poly *B)
             v = s1;
             g2 = s2;
         }
-        if (isequal(u, {1, 0, 0, 0}))
+        if (isequal(u, one, 4))
             return g1;
         else
             return g2;
     }
 }
-
-// poly *leftshift(poly *C, int pow)
-// {
-//     int j;
-//     poly test = 0x8000000000000000;
-//     test <<= pow;
-//     return test;
-// }

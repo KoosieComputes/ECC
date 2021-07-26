@@ -14,7 +14,7 @@ typedef unsigned long poly;
 poly *copyPoly(poly *A, short len, char size);
 poly *polyadd(poly *A, poly *B);
 poly *polymult(poly *A, poly *B);
-poly *truncate(poly *C, int j);
+poly *truncate(poly *C, short j);
 poly *polydivide(poly *A, poly *B);
 void reduce(poly *A);
 int isequal(poly *A, poly *B, short len);

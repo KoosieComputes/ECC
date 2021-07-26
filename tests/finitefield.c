@@ -67,6 +67,14 @@ TEST(Reduction, SevenWordTests)
     EXPECT_THAT(actual, ElementsAreArray(expected1));
 }
 
+TEST(Division, FullWordTest)
+{
+    poly *pointer = polydivide(F, D);
+    ARRAY(pointer);
+    const poly expected1[] = {0xE212571AF16B2DB, 0x80D8C2E1BFE23793, 0x066BEB93C7BE1B66, 0x119F47BA491};
+    EXPECT_THAT(actual, ElementsAreArray(expected1));
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
