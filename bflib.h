@@ -14,4 +14,4 @@ poly *copyPoly(poly *A, int len);
 poly *polyadd(poly *A, poly *B);
 poly *polymult(poly *A, poly *B);
 poly *truncate(poly *C, int j);
-poly *reduce(poly *A);
+void reduce(poly *A);

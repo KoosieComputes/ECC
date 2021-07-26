@@ -15,6 +15,8 @@ poly D[] = {0x000000000007fcc9, 0x002bb5a1dfb406d5, 0x002c18ab23fae0a6, 0x000000
 poly E[] = {0x0002d8605650dd22, 0x0000000000000000, 0x00035fd6089cfa4b, 0x000000000006906a};
 poly F[] = {0x4d97f56ce72c46e8, 0x2fd5f586f1a14166, 0xc702c54a7b4e7c65, 0x882d36a52d372aaa};
 
+poly G[] = {0x4d97f56ce72c46e8, 0x2fd5f586f1a14166, 0xc702c54a7b4e7c65, 0x882d36a52d372aaa, 0x002c18ab23fae0a6, 0x002bb5a1dfb406d5, 0x7f870103204f8423, 0};
+
 TEST(Addition, AllAddition)
 {
     poly *pointer = polyadd(A, B);
@@ -45,6 +47,23 @@ TEST(Multiplication, OneWordTests)
     ARRAY(pointer);
     const poly expected3[] = {0xDF7C934A4A, 0x1EFFB19F5F9291, 0x17C7473C2C719613, 0x80F};
     EXPECT_THAT(actual, ElementsAreArray(expected3));
+}
+
+TEST(Reduction, FourWordTests)
+{
+    poly *red = copyPoly(F, 8);
+    reduce(red);
+    ARRAY(red);
+    const poly expected1[] = {0x4D97F56CE7685073, 0x2FD5F587E1FB2D66, 0xC702C54A7B4E7C65, 0xA52D372AAA};
+    EXPECT_THAT(actual, ElementsAreArray(expected1));
+}
+
+TEST(Reduction, SevenWordTests)
+{
+    reduce(G);
+    ARRAY(G);
+    const poly expected1[] = {0x18798F1DB7481FF7, 0x46D3EAC40A452B6A, 0xF9FAEF226A9658E8, 0xE32D5F8269};
+    EXPECT_THAT(actual, ElementsAreArray(expected1));
 }
 
 int main(int argc, char **argv)

@@ -61,7 +61,8 @@ poly *truncate(poly *C, int j)
 
 void reduce(poly *A)
 {
-    int i, Temp;
+    int i;
+    poly Temp;
 
     for (i = 7; i > 3; i--)
     {
