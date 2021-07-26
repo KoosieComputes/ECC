@@ -51,7 +51,7 @@ TEST(Multiplication, OneWordTests)
 
 TEST(Reduction, FourWordTests)
 {
-    poly *red = copyPoly(F, 8);
+    poly *red = copyPoly(F, 8, '0');
     reduce(red);
     ARRAY(red);
     const poly expected1[] = {0x4D97F56CE7685073, 0x2FD5F587E1FB2D66, 0xC702C54A7B4E7C65, 0xA52D372AAA};
@@ -60,8 +60,9 @@ TEST(Reduction, FourWordTests)
 
 TEST(Reduction, SevenWordTests)
 {
-    reduce(G);
-    ARRAY(G);
+    poly *red = copyPoly(G, 8, '1');
+    reduce(red);
+    ARRAY(red);
     const poly expected1[] = {0x18798F1DB7481FF7, 0x46D3EAC40A452B6A, 0xF9FAEF226A9658E8, 0xE32D5F8269};
     EXPECT_THAT(actual, ElementsAreArray(expected1));
 }
