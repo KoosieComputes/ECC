@@ -15,6 +15,16 @@ int isequal(poly *A, poly *B, short len)
     return 1;
 }
 
+void swapArray(poly *a, poly *b, short n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        poly tmp = a[i];
+        a[i] = b[i];
+        b[i] = tmp;
+    }
+}
+
 poly *copyPoly(poly *A, short len, char size)
 {
     int i;
@@ -99,42 +109,33 @@ poly *polydivide(poly *A, poly *B)
     poly one[] = {1, 0, 0, 0};
     poly *v = f;
     poly *u = copyPoly(A, 4, '0');
-    poly *g1 = copyPoly(B, 4, '0');
-    poly *g2 = zero;
+    poly *z1 = copyPoly(B, 4, '0');
+    poly *z2 = zero;
 
-    while (!(isequal(u, one, 4)) && !(isequal(v, one, 4)))
+    while (!(isequal(u, one, 4)))
     {
-        while (u[0] % 2 == 0)
+        if (u[0] % 2 == 0)
         {
             mpn_rshift(u, u, 4, 1);
-            if (g1[0] % 2 == 0)
-                mpn_rshift(g1, g1, 4, 1);
+            if (z1[0] % 2 == 0)
+                mpn_rshift(z1, z1, 4, 1);
             else
-                mpn_rshift(g1, polyadd(g1, f), 4, 1);
-        }
-        while (v[0] % 2 == 0)
-        {
-            mpn_rshift(v, v, 4, 1);
-            if (g2[0] % 2 == 0)
-                mpn_rshift(g2, g2, 4, 1);
-            else
-                mpn_rshift(g2, polyadd(g2, f), 4, 1);
-        }
-        poly *s1 = polyadd(u, v);
-        poly *s2 = polyadd(g1, g2);
-        if (mpn_sizeinbase(u, 4, 2) > mpn_sizeinbase(v, 4, 2))
-        {
-            u = s1;
-            g1 = s2;
+                mpn_rshift(z1, polyadd(z1, f), 4, 1);
         }
         else
         {
-            v = s1;
-            g2 = s2;
+            if (mpn_cmp(v, u, 4) > 0)
+            {
+                swapArray(u, v, 4);
+                swapArray(z1, z2, 4);
+            }
+            mpn_rshift(u, polyadd(u, f), 4, 1);
+            z1 = polyadd(z1, z2);
+            if (z1[0] % 2 == 0)
+                mpn_rshift(z1, z1, 4, 1);
+            else
+                mpn_rshift(z1, polyadd(z1, f), 4, 1);
         }
-        if (isequal(u, one, 4))
-            return g1;
-        else
-            return g2;
     }
+    return z1;
 }

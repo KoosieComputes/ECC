@@ -17,4 +17,5 @@ poly *polymult(poly *A, poly *B);
 poly *truncate(poly *C, short j);
 poly *polydivide(poly *A, poly *B);
 void reduce(poly *A);
+void swapArray(poly *a, poly *b, short n);
 int isequal(poly *A, poly *B, short len);
