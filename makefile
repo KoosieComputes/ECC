@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-lgmp -I.
 DEPS = bflib.h
-OBJ= main.o bflib.o
+OBJ= main.o bflib.o curve.o
 
 %.o: %.c $(DEPS)
 	@-$(CC) -c -o $@ $< 

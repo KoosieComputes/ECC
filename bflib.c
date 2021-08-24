@@ -106,7 +106,7 @@ poly *polydivide(poly *A, poly *B)
 {
     poly f[] = RPOLY;
     poly zero[] = EMPTY;
-    poly one[] = {1, 0, 0, 0};
+    poly one[] = ONE;
     poly *v = f;
     poly *u = copyPoly(A, 4, '0');
     poly *z1 = copyPoly(B, 4, '0');
