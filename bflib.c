@@ -46,7 +46,6 @@ poly *copyPoly(poly *A, short len, char size)
 
 poly *polyadd(poly *A, poly *B)
 {
-    int i;
     static poly C[T];
     mpn_xor_n(C, A, B, 4);
     return C;
@@ -104,13 +103,14 @@ void reduce(poly *A)
 
 poly *polydivide(poly *A, poly *B)
 {
+    int i;
     poly f[] = RPOLY;
     poly zero[] = EMPTY;
     poly one[] = ONE;
-    poly *v = f;
+    poly *v = copyPoly(f, 4, '0');
     poly *u = copyPoly(A, 4, '0');
     poly *z1 = copyPoly(B, 4, '0');
-    poly *z2 = zero;
+    poly *z2 = copyPoly(zero, 4, '0');
 
     while (!(isequal(u, one, 4)))
     {
@@ -129,7 +129,8 @@ poly *polydivide(poly *A, poly *B)
                 swapArray(u, v, 4);
                 swapArray(z1, z2, 4);
             }
-            mpn_rshift(u, polyadd(u, f), 4, 1);
+            mpn_xor_n(u, u, v, 4);
+            mpn_rshift(u, u, 4, 1);
             z1 = polyadd(z1, z2);
             if (z1[0] % 2 == 0)
                 mpn_rshift(z1, z1, 4, 1);
