@@ -46,7 +46,7 @@ poly *copyPoly(poly *A, short len, char size)
 
 poly *polyadd(poly *A, poly *B)
 {
-    static poly C[T];
+    poly *C = (poly *)malloc(sizeof(poly) * T);
     mpn_xor_n(C, A, B, 4);
     return C;
 }
@@ -54,10 +54,11 @@ poly *polyadd(poly *A, poly *B)
 poly *polymult(poly *A, poly *B)
 {
     int k, j, i;
-    poly *pC;
+    // poly *pC;
     poly *Bcopy = copyPoly(B, 8, '0');
-    static poly C[] = LEMPTY;
-    pC = C;
+    poly *pC = (poly *)malloc(sizeof(poly) * T);
+    for (i = 0; i < T; i++)
+        pC[i] = 0;
 
     // mpn_add_n(pC, truncate(pC, j), B, 4);
     for (k = 0; k < WORDSIZE; k++)
@@ -74,7 +75,7 @@ poly *polymult(poly *A, poly *B)
 poly *truncate(poly *A, short j)
 {
     int i;
-    static poly TC[T];
+    poly *TC = (poly *)malloc(sizeof(poly) * T);
 
     for (i = 0; i < j; i++)
         TC[i] = 0;
@@ -129,8 +130,7 @@ poly *polydivide(poly *A, poly *B)
                 swapArray(u, v, 4);
                 swapArray(z1, z2, 4);
             }
-            mpn_xor_n(u, u, v, 4);
-            mpn_rshift(u, u, 4, 1);
+            mpn_rshift(u, polyadd(u, v), 4, 1);
             z1 = polyadd(z1, z2);
             if (z1[0] % 2 == 0)
                 mpn_rshift(z1, z1, 4, 1);
