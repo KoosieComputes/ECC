@@ -47,40 +47,69 @@ poly *copyPoly(poly *A, short len, char size)
 poly *polyadd(poly *A, poly *B)
 {
     poly *C = (poly *)malloc(sizeof(poly) * T);
-    mpn_xor_n(C, A, B, 4);
+    mpn_xor_n(C, A, B, T);
     return C;
 }
 
 poly *polymult(poly *A, poly *B)
 {
     int k, j, i;
-    // poly *pC;
+    poly *J;
     poly *Bcopy = copyPoly(B, 8, '0');
-    poly *pC = (poly *)malloc(sizeof(poly) * T);
-    for (i = 0; i < T; i++)
-        pC[i] = 0;
-
-    // mpn_add_n(pC, truncate(pC, j), B, 4);
+    poly *C = (poly *)malloc(sizeof(poly) * LT);
+    for (i = 0; i < LT; i++)
+        C[i] = 0;
     for (k = 0; k < WORDSIZE; k++)
     {
         for (j = 0; j < T; j++)
             if ((*(A + j) >> (k)) % 2 == 1)
-                pC = polyadd(truncate(pC, j), Bcopy);
+            {
+                // printd(C, 8);
+                J = wordshift(Bcopy, j);
+                // printd(J, 8);
+                // printd(Bcopy, 8);
+                mpn_xor_n(C, C, J, LT);
+                // printd(C, 8);
+                // printf("\n");
+            }
         if (k < (WORDSIZE - 1))
             mpn_lshift(Bcopy, Bcopy, 8, 1);
     }
-    return pC;
+    reduce(C);
+    return C;
 }
 
-poly *truncate(poly *A, short j)
+poly *ltrmult(poly *A, poly *B)
+{
+    int k, j, i;
+    // poly *pC;
+    poly *Bcopy = copyPoly(B, 8, '0');
+    poly *C = (poly *)malloc(sizeof(poly) * LT);
+    for (i = 0; i < LT; i++)
+        C[i] = 0;
+    for (k = WORDSIZE - 1; k >= 0; k--)
+    {
+        for (j = 0; j < T; j++)
+            if ((*(A + j) >> (k)) % 2 == 1)
+                mpn_xor_n(C, C, wordshift(Bcopy, j), LT);
+        if (k != 0)
+            mpn_lshift(C, C, 8, 1);
+    }
+    reduce(C);
+    return C;
+}
+
+poly *wordshift(poly *A, short j)
 {
     int i;
-    poly *TC = (poly *)malloc(sizeof(poly) * T);
+    poly *TC = (poly *)malloc(sizeof(poly) * LT);
 
     for (i = 0; i < j; i++)
         TC[i] = 0;
-    for (i = j; i < T; i++)
-        TC[i] = *(A + i);
+    for (i = j; i < LT; i++)
+        TC[i] = *(A + (i - j));
+    // for (i = LT - j; i < LT; i++)
+    //     TC[i] = 0;
     return TC;
 }
 
