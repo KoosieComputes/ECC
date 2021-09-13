@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <gmp.h>
 #define WORDSIZE 64
 #define M 233
 #define T 4
@@ -65,4 +68,4 @@ struct ECP {
 void invertPoint(struct ECP point);
 struct ECP pointadd(struct ECP P1, struct ECP P2);
 struct ECP pointdouble(struct ECP point);
-
+struct ECP pointmult(struct ECP point, poly* k);

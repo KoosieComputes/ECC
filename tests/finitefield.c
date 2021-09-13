@@ -139,6 +139,21 @@ TEST(PointAdd, pointP)
     EXPECT_THAT(actual, ElementsAreArray(expectedy));
 }
 
+TEST(PointMultiply, small_k_tests)
+{
+    struct ECP P;
+    P.x = x;
+    P.y = y;
+    poly k[] = {0x3, 0, 0, 0};
+    struct ECP threeP = pointmult(P, k);
+    ARRAY(threeP.x);
+    const poly expectedx[] = {0xC0E3FB6EA0AEF9FF, 0xB9F0158C4D02A85C, 0x11BD753A76364595, 0x80F50A3309};
+    EXPECT_THAT(actual, ElementsAreArray(expectedx));
+    ARRAY(threeP.y);
+    const poly expectedy[] = {0x3DAF76901C9B8743, 0xC27104BD5C42BCBE, 0xEB52675E98E6432C, 0x17A49033F12};
+    EXPECT_THAT(actual, ElementsAreArray(expectedy));
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
