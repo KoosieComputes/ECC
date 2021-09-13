@@ -30,44 +30,50 @@ struct ECP pointdouble(struct ECP point)
 struct ECP pointmult(struct ECP point, poly *k)
 {
     int i, j;
-    char first = 0x00;
+    char first = 0x0;
     struct ECP product;
-    poly tail;
     poly one[] = ONE;
     poly zero[] = EMPTY;
-    poly *Temp = &zero[0];
-    poly *X1 = &point.x[0];
-    poly *Z1 = &one[0];
+    poly *Temp = copyPoly(zero, 4, '0');
+    poly *X1 = copyPoly(point.x, 4, '0');
+    poly *Z1 = copyPoly(one, 4, '0');
     poly *Z2 = polysquare(point.x);
     poly *X2 = polyadd(polysquare(Z2), b);
-    poly *shifter = (poly *)malloc(sizeof(poly) * T);
+    // poly *shifter = (poly *)malloc(sizeof(poly) * T);
 
-    for (i = (T * WORDSIZE) - 1; i >= 0; i--)
+    for (i = T - 1; i >= 0; i--)
     {
-        mpn_rshift(shifter, k, j, 4);
-        if (first < 1)
+        for (j = WORDSIZE - 1; j >= 0; j--)
         {
-            if (!isequal(shifter, zero, 4))
-                first++;
-            continue;
-        }
-        if (shifter[0] % 2 == 1)
-        {
-            Temp = copyPoly(Z1, 4, '0');
-            Z1 = polysquare(polyadd(polymult(X1, Z2), polymult(X2, Z1)));
-            X1 = polyadd(polymult(point.x, Z1), polymult(polymult(X1, X2), polymult(Temp, Z2)));
-            Temp = copyPoly(X2, 4, '0');
-            X2 = polyadd(polysquare(polysquare(X2)), polymult(b, polysquare(polysquare(Z2))));
-            Z2 = polymult(polysquare(Temp), polysquare(Z2));
-        }
-        else
-        {
-            Temp = copyPoly(Z2, 4, '0');
-            Z2 = polysquare(polyadd(polymult(X1, Z2), polymult(X2, Z1)));
-            X2 = polyadd(polymult(point.x, Z2), polymult(polymult(X1, X2), polymult(Temp, Z1)));
-            Temp = copyPoly(X1, 4, '0');
-            X1 = polyadd(polysquare(polysquare(X1)), polymult(b, polysquare(polysquare(Z1))));
-            Z1 = polymult(polysquare(Temp), polysquare(Z1));
+            // mpn_rshift(shifter, k, 4, j);
+            // printd(shifter, 4);
+            // printf("%d\n", j);
+            if (first < 1)
+            {
+                if ((k[i] >> j) % 2 == 1)
+                {
+                    first += 1;
+                }
+                continue;
+            }
+            if ((k[i] >> j) % 2 == 1)
+            {
+                Temp = copyPoly(Z1, 4, '0');
+                Z1 = polysquare(polyadd(polymult(X1, Z2), polymult(X2, Z1)));
+                X1 = polyadd(polymult(point.x, Z1), polymult(polymult(X1, X2), polymult(Temp, Z2)));
+                Temp = copyPoly(X2, 4, '0');
+                X2 = polyadd(polysquare(polysquare(X2)), polymult(b, polysquare(polysquare(Z2))));
+                Z2 = polymult(polysquare(Temp), polysquare(Z2));
+            }
+            else
+            {
+                Temp = copyPoly(Z2, 4, '0');
+                Z2 = polysquare(polyadd(polymult(X1, Z2), polymult(X2, Z1)));
+                X2 = polyadd(polymult(point.x, Z2), polymult(polymult(X1, X2), polymult(Temp, Z1)));
+                Temp = copyPoly(X1, 4, '0');
+                X1 = polyadd(polysquare(polysquare(X1)), polymult(b, polysquare(polysquare(Z1))));
+                Z1 = polymult(polysquare(Temp), polysquare(Z1));
+            }
         }
     }
 

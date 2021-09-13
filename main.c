@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <gmp.h>
 #include "bflib.h"
 
 int main(int argc, char const *argv[])
@@ -21,6 +19,14 @@ int main(int argc, char const *argv[])
     poly y[] = {0x36716f7e01f81052, 0xbf8a0beff867a7ca, 0x03350678e58528be, 0x1006a08a419};
     poly f[] = RPOLY;
 
-    printd(polysquare(x), 8);
+    struct ECP P;
+    P.x = x;
+    P.y = y;
+    poly k[] = {0x3, 0, 0, 0};
+    pC = copyPoly(one, 4, '0');
+    struct ECP threeP;
+    // threeP = pointmult(P, k);
+    mpn_rshift(pC, Fsq, 4, 4);
+    printd(pC, 4);
     return 0;
 }
