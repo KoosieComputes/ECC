@@ -19,23 +19,8 @@ int main(int argc, char const *argv[])
     poly pG[] = {0xE64B018E47E4F4D6, 0x37E384C1B5C5117E, 0x7B4A876458166687, 0xE32D1FC6E8};
     poly x[] = {0xf8f8eb7371fd558b, 0x5fef65bc391f8b36, 0x8313bb2139f1bb75, 0xfac9dfcbac};
     poly y[] = {0x36716f7e01f81052, 0xbf8a0beff867a7ca, 0x03350678e58528be, 0x1006a08a419};
-    poly x2[] = {0xf8f8eb7371fd558b, 0x5fef65bc391f8b36, 0x8313bb2139f1bb75, 0xfac9dfcba};
-    poly y2[] = {0x36716f7e01f81052, 0xbf8a0beff867a7ca, 0x03350678e58528be, 0x1006a08a41};
     poly f[] = RPOLY;
-    // printd(ltrmult(x, y), 4);
-    // printd(wordshift(G, 1), 8);
-    // poly *lam = polydivide(x, polyadd(x, y));
-    // poly *xer = polyadd(polyadd(polymult(lam, lam), lam), one);
-    // printd(polyadd(polyadd(polymult(x, x), polymult(xer, lam)), xer), 4);
-    struct ECP doubler1;
-    doubler1.x = x;
-    doubler1.y = y;
-    struct ECP doubler2;
-    doubler2.x = x2;
-    doubler2.y = y2;
-    struct ECP doubler = pointadd(doubler1, doubler2);
-    // reduce(prod);
-    printd(doubler.x, 4);
-    printd(doubler.y, 4);
+
+    printd(polysquare(x), 8);
     return 0;
 }

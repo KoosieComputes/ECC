@@ -63,37 +63,9 @@ poly *polymult(poly *A, poly *B)
     {
         for (j = 0; j < T; j++)
             if ((*(A + j) >> (k)) % 2 == 1)
-            {
-                // printd(C, 8);
-                J = wordshift(Bcopy, j);
-                // printd(J, 8);
-                // printd(Bcopy, 8);
-                mpn_xor_n(C, C, J, LT);
-                // printd(C, 8);
-                // printf("\n");
-            }
+                mpn_xor_n(C, C, wordshift(Bcopy, j), LT);
         if (k < (WORDSIZE - 1))
             mpn_lshift(Bcopy, Bcopy, 8, 1);
-    }
-    reduce(C);
-    return C;
-}
-
-poly *ltrmult(poly *A, poly *B)
-{
-    int k, j, i;
-    // poly *pC;
-    poly *Bcopy = copyPoly(B, 8, '0');
-    poly *C = (poly *)malloc(sizeof(poly) * LT);
-    for (i = 0; i < LT; i++)
-        C[i] = 0;
-    for (k = WORDSIZE - 1; k >= 0; k--)
-    {
-        for (j = 0; j < T; j++)
-            if ((*(A + j) >> (k)) % 2 == 1)
-                mpn_xor_n(C, C, wordshift(Bcopy, j), LT);
-        if (k != 0)
-            mpn_lshift(C, C, 8, 1);
     }
     reduce(C);
     return C;
@@ -168,4 +140,35 @@ poly *polydivide(poly *A, poly *B)
         }
     }
     return z1;
+}
+
+poly *polysquare(poly *A)
+{
+    int i, j;
+    poly *C = (poly *)malloc(sizeof(poly) * LT);
+    for (i = 0; i < LT; i++)
+        C[i] = 0;
+    unsigned char bytes[8];
+    for (i = 0; i < T; i++)
+    {
+        bytes[0] = A[i];
+        bytes[1] = A[i] >> 8;
+        bytes[2] = A[i] >> 16;
+        bytes[3] = A[i] >> 24;
+        bytes[4] = A[i] >> 32;
+        bytes[5] = A[i] >> 40;
+        bytes[6] = A[i] >> 48;
+        bytes[7] = A[i] >> 56;
+
+        C[2 * i] = (MortonTable[bytes[3]] << 48) |
+                   (MortonTable[bytes[2]] << 32) |
+                   (MortonTable[bytes[1]] << 16) |
+                   MortonTable[bytes[0]];
+        C[2 * i + 1] = (MortonTable[bytes[7]] << 48) |
+                       (MortonTable[bytes[6]] << 32) |
+                       (MortonTable[bytes[5]] << 16) |
+                       MortonTable[bytes[4]];
+    }
+    reduce(C);
+    return C;
 }

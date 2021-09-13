@@ -62,6 +62,14 @@ TEST(Multiplication, BigTests)
     EXPECT_THAT(actual, ElementsAreArray(expected2));
 }
 
+TEST(Squaring, bigtest)
+{
+    poly *pointer = polysquare(F);
+    ARRAY(pointer);
+    const poly expected1[] = {0x6F1BED4F0C867BE9, 0x299D75EB6EA0069C, 0x7EA157EF0CF22E78, 0x1BBFDB9689F};
+    EXPECT_THAT(actual, ElementsAreArray(expected1));
+}
+
 TEST(Reduction, FourWordTests)
 {
     poly *red = copyPoly(F, 8, '0');
