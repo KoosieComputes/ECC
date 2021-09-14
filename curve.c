@@ -45,15 +45,10 @@ struct ECP pointmult(struct ECP point, poly *k)
     {
         for (j = WORDSIZE - 1; j >= 0; j--)
         {
-            // mpn_rshift(shifter, k, 4, j);
-            // printd(shifter, 4);
-            // printf("%d\n", j);
             if (first < 1)
             {
                 if ((k[i] >> j) % 2 == 1)
-                {
                     first += 1;
-                }
                 continue;
             }
             if ((k[i] >> j) % 2 == 1)

@@ -14,6 +14,7 @@ poly C[] = {0x0000000004aee4ea, 0x000000a533d70a81, 0x7f870103204f8423, 0x000000
 poly D[] = {0x000000000007fcc9, 0x002bb5a1dfb406d5, 0x002c18ab23fae0a6, 0x000000675d04bba1};
 poly E[] = {0x0002d8605650dd22, 0x0000000000000000, 0x00035fd6089cfa4b, 0x000000000006906a};
 poly F[] = {0x4d97f56ce72c46e8, 0x2fd5f586f1a14166, 0xc702c54a7b4e7c65, 0x882d36a52d372aaa};
+poly pF[] = {0x4D97F56CE7685073, 0x2FD5F587E1FB2D66, 0xC702C54A7B4E7C65, 0xA52D372AAA};
 poly Fsq[] = {0x6F1BED4F0C867BE9, 0x299D75EB6EA0069C, 0x7EA157EF0CF22E78, 0x1BBFDB9689F};
 poly x[] = {0xf8f8eb7371fd558b, 0x5fef65bc391f8b36, 0x8313bb2139f1bb75, 0xfac9dfcbac};
 poly y[] = {0x36716f7e01f81052, 0xbf8a0beff867a7ca, 0x03350678e58528be, 0x1006a08a419};
@@ -151,6 +152,20 @@ TEST(PointMultiply, small_k_tests)
     EXPECT_THAT(actual, ElementsAreArray(expectedx));
     ARRAY(threeP.y);
     const poly expectedy[] = {0x3DAF76901C9B8743, 0xC27104BD5C42BCBE, 0xEB52675E98E6432C, 0x17A49033F12};
+    EXPECT_THAT(actual, ElementsAreArray(expectedy));
+}
+
+TEST(PointMultiply, large_k_tests)
+{
+    struct ECP P;
+    P.x = x;
+    P.y = y;
+    struct ECP threeP = pointmult(P, pF);
+    ARRAY(threeP.x);
+    const poly expectedx[] = {0x600319D429F6FC0E, 0x0308D6C0EADD9D99, 0xDDB9AA1FB679AFA1, 0x12BF84CF4B7};
+    EXPECT_THAT(actual, ElementsAreArray(expectedx));
+    ARRAY(threeP.y);
+    const poly expectedy[] = {0x996B12E229B5185D, 0x45FE3569F97929E2, 0x45ACFF7162E26040, 0x18344442785};
     EXPECT_THAT(actual, ElementsAreArray(expectedy));
 }
 
