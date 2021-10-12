@@ -70,3 +70,14 @@ void invertPoint(struct ECP point);
 struct ECP pointadd(struct ECP P1, struct ECP P2);
 struct ECP pointdouble(struct ECP point);
 struct ECP pointmult(struct ECP point, poly* k);
+
+struct Domains {
+    int q;
+    unsigned char *seed;
+    poly *a;
+    poly *b;
+    struct ECP P;
+    poly *n;
+    poly *h;
+};
+poly hash(unsigned char *str);
