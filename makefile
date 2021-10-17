@@ -1,10 +1,3 @@
-CC=gcc
-CFLAGS=-lgmp -I.
-DEPS = bflib.h
-OBJ= main.o bflib.o curve.o
+all: main.cpp bflib.c
+	g++ -g -O2 -std=c++11 -pthread -o all main.cpp -lntl -lgmp -lm
 
-%.o: %.c $(DEPS)
-	@-$(CC) -c -o $@ $< 
-
-all: $(OBJ)
-	@-$(CC) -o $@ $^ $(CFLAGS)

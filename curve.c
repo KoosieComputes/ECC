@@ -41,9 +41,9 @@ struct ECP pointmult(struct ECP point, poly *k)
     poly *X2 = polyadd(polysquare(Z2), b);
     // poly *shifter = (poly *)malloc(sizeof(poly) * T);
 
-    for (i = T - 1; i >= 0; i--)
+    for (i = WORD_COUNT - 1; i >= 0; i--)
     {
-        for (j = WORDSIZE - 1; j >= 0; j--)
+        for (j = WORD_SIZE - 1; j >= 0; j--)
         {
             if (first < 1)
             {

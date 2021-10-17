@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "../bflib.h"
-#define ARRAY(p)                \
-    for (int i = 0; i < T; i++) \
+#define ARRAY(p)                         \
+    for (int i = 0; i < WORD_COUNT; i++) \
         actual[i] = *(p + i);
 
 using ::testing::ElementsAreArray;
 
-poly actual[T] = EMPTY;
+poly actual[WORD_COUNT] = EMPTY;
 poly A[] = {0x000000000000020A, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000};
 poly B[] = {0x0000000000003011, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000};
 poly C[] = {0x0000000004aee4ea, 0x000000a533d70a81, 0x7f870103204f8423, 0x0000000000000000};
