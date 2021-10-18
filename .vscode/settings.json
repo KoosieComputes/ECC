@@ -41,6 +41,7 @@
         "istream": "c",
         "ostream": "c",
         "utility": "c",
-        "variant": "c"
+        "variant": "c",
+        "ios": "cpp"
     }
 }
