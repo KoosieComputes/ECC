@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <gmp.h>
 
-#define FIELD_SIZE 233
+#define FIELD_SIZE 7
 #define WORD_SIZE 64
 #define WORD_COUNT 4
 #define WORD_COUNT_LONG 8

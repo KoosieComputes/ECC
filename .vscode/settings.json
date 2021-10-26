@@ -42,6 +42,8 @@
         "ostream": "c",
         "utility": "c",
         "variant": "c",
-        "ios": "cpp"
+        "ios": "cpp",
+        "iostream": "cpp",
+        "cmath": "cpp"
     }
 }
