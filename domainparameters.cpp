@@ -5,6 +5,7 @@ using namespace std;
 int i;
 ZZ_pX p;
 ZZ_pXModulus P;
+ZZX p2;
 
 poly hash(poly x)
 {
@@ -103,16 +104,15 @@ void initialize()
     // SetCoeff(p, 1, 562);
     // SetCoeff(p, 0);
 
-    SetCoeff(p, 7);
-    SetCoeff(p, 1);
-    SetCoeff(p, 0);
-
-    // SetCoeff(p, 233);
-    // SetCoeff(p, 74);
+    // SetCoeff(p, 7);
+    // SetCoeff(p, 1);
     // SetCoeff(p, 0);
 
+    SetCoeff(p, 233);
+    SetCoeff(p, 74);
+    SetCoeff(p, 0);
+
     build(P, p);
-    ZZ_pE::init(P);
 }
 
 ZZ AGM(poly *b)
@@ -171,14 +171,120 @@ ZZ AGM(poly *b)
     return (ZZ(1) << FIELD_SIZE) + 1 - T;
 }
 
-ZZ_pX retModulus()
-{
-    return p;
-}
+// ZZ_pX retModulus()
+// {
+//     return p;
+// }
 
 ZZ AGM2(poly *b)
 {
+    initialize2();
+    ZZX B = polytoNTL2(b);
+    ZZX lambda = 1 + 8 * B;
+    ZZ modulus;
+    int k = 5;
+    int N = ceil(FIELD_SIZE / 2.0) + 3;
+    while (k <= N)
+    {
+        modulus = ZZ(1) << k;
+        ZZX a = (lambda - 1) / 2;
+        ZZX z0 = red(1 - a, ZZ(8));
+        ZZX lam2 = (1 + lambda) / 2;
+        // cout << k << "\n";
+        ZZX ivs = InvSqrt2(lambda, z0, k - 1);
+        lambda = MulMod(ivs, lam2, p2);
+        lambda = red(lambda, ZZ(1) << k);
+        k++;
+    }
+    lambda = red(lambda, ZZ(1) << (N - 1));
+    ZZX inv = Invert2((1 + lambda) / 2, N - 1);
+    ZZX tr = MulMod(lambda, inv, p2);
+    tr = red(tr, ZZ(1) << (N - 1));
+    ZZ t = resultant(p2, tr);
+    t = -t % (ZZ(1) << (N - 1));
+    cout << t << "\n";
+    if (sqr(t) > (ZZ(1) << (FIELD_SIZE + 2)))
+        t -= (ZZ(1) << (N - 1));
+
+    return (ZZ(1) << FIELD_SIZE) + 1 - t;
 }
+
+ZZX Invert2(ZZX a, int N)
+{
+    ZZX z;
+    if (N == 1)
+    {
+        ZZ_p::init(ZZ(2));
+        initialize();
+        ZZ_pX inv = conv<ZZ_pX>(red(a, ZZ(2)));
+        ZZ_pX temp = InvMod(inv, P);
+        z = conv<ZZX>(temp);
+    }
+    else
+    {
+        int Np = ceil((N * 1.0) / 2);
+        z = Invert2(a, Np);
+        z += MulMod(z, 1 - MulMod(a, z, p2), p2);
+        z = red(z, ZZ(1) << N);
+    }
+    return z;
+}
+
+ZZX InvSqrt2(ZZX a, ZZX z0, int N)
+{
+    ZZX z;
+    if (N <= 3)
+    {
+        z = z0;
+    }
+    else
+    {
+        int Np = ceil((N + 1.0) / 2);
+        z = InvSqrt2(a, z0, Np);
+        ZZX sqr = MulMod(z, z, p2);
+        // cout << "heyyy \n";
+        ZZX s = 1 - MulMod(a, sqr, p2);
+        s = red(s, ZZ(1) << (N + 1));
+        s /= 2;
+        z += MulMod(z, s, p2);
+        z = red(z, ZZ(1) << N);
+    }
+    return z;
+}
+
+ZZX red(ZZX a, ZZ modulus)
+{
+    ZZX r;
+    for (i = 0; i <= deg(a); i++)
+        SetCoeff(r, i, a[i] % modulus);
+
+    return r;
+}
+
+void initialize2()
+{
+    // SetCoeff(p2, 7);
+    // SetCoeff(p2, 1);
+    // SetCoeff(p2, 0);
+
+    SetCoeff(p2, 233);
+    SetCoeff(p2, 74);
+    SetCoeff(p2, 0);
+}
+
+ZZX polytoNTL2(poly *b)
+{
+    ZZX B;
+    int j;
+    for (i = 0; i < WORD_COUNT; i++)
+    {
+        for (j = 0; j < WORD_SIZE; j++)
+            if ((b[i] >> j) % 2 == 1)
+                SetCoeff(B, (i * 64) + j);
+    }
+    return B;
+}
+
 // struct Domains randomEC()
 // {
 //     struct Domains curve;

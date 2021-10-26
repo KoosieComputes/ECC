@@ -32,9 +32,9 @@ int main(int argc, char const *argv[])
     // ZZ_p::init(ZZ(2) << 2);
     // j = (j * 3) / 3;
 
-    // poly b[] = {0x81FE115F7D8F90AD, 0x213B333B20E9CE42, 0x332C7F8C0923BB58, 0x66647EDE6C};
-    poly b[] = {0b10001, 0, 0, 0};
-    ZZ j = AGM(b);
+    poly b[] = {0x81FE115F7D8F90AD, 0x213B333B20E9CE42, 0x332C7F8C0923BB58, 0x66647EDE6C};
+    // poly b[] = {0b10001, 0, 0, 0};
+    ZZ j = AGM2(b);
 
     // ZZ_p::init(ZZ(2) << 9);
     // initialize();
