@@ -69,9 +69,11 @@ poly *polymult(poly *A, poly *B);
 poly *wordshift(poly *C, short j);
 poly *polydivide(poly *A, poly *B);
 poly *polysquare(poly *A);
+poly *polysolve(poly *A);
 void reduce(poly *A);
 void swapArray(poly *a, poly *b, short n);
 int isequal(poly *A, poly *B, short len);
+int polytrace(poly *A);
 
 struct ECP
 {
@@ -82,15 +84,3 @@ void invertPoint(struct ECP point);
 struct ECP pointadd(struct ECP P1, struct ECP P2);
 struct ECP pointdouble(struct ECP point);
 struct ECP pointmult(struct ECP point, poly *k);
-
-struct Domains
-{
-    int q;
-    unsigned char *seed;
-    poly *a;
-    poly *b;
-    struct ECP P;
-    poly *n;
-    poly *h;
-};
-poly hash(unsigned char *str);

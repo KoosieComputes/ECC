@@ -6,8 +6,9 @@ int i;
 ZZ_pX p;
 ZZ_pXModulus P;
 ZZX p2;
+poly b[WORD_COUNT];
 
-poly hash(poly x)
+poly hashfunc(poly x)
 {
     x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
     x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
@@ -137,16 +138,60 @@ ZZX polytoNTL(poly *b)
     return B;
 }
 
-// struct Domains randomEC()
-// {
-//     struct Domains curve;
-//     poly b[WORD_COUNT];
-//     int s = 3;
-//     int v = 41;
-//     poly S = randnum();
-//     b[0] = hash(S) & 0x1FFFFFFFFFF;
-//     for (i = 1; i < WORD_COUNT; i++)
-//         b[i] = hash(S + i);
+poly *randomB()
+{
+    poly S = randnum();
+    b[0] = hashfunc(S) & 0x1FFFFFFFFFF;
+    for (i = 1; i < WORD_COUNT; i++)
+        b[i] = hashfunc(S + i);
 
-//     ZZ N = AGM(b);
-// }
+    return b;
+}
+
+bool suitablePrime(ZZ p)
+{
+    bool vunerable = false;
+    for (i = 1; i <= 20; i++)
+    {
+        if (divide(p, power((ZZ(1) << 233), i) - 1) == 1)
+        {
+            vunerable = true;
+            break;
+        }
+    }
+    return vunerable;
+}
+
+struct Domains randomEC()
+{
+    struct Domains curve;
+    struct ECP generator, solution;
+    bool flags = true;
+    bool vunerable = false;
+    poly *B;
+    ZZ prime, N;
+    while (flags)
+    {
+        B = randomB();
+        while (polytrace(B) == 1) // y^2 + y = b (trace needs to be 0 for a solution)
+            B = randomB();
+        N = AGM(B);
+        if (divide(N, 2) == 1) // Cofactor needs to be 2 for Message representation on point.
+        {
+            prime = N / 2;
+            if (ProbPrime(prime, 20)) // Negligible probability for false positives 4^(-20)
+                if (suitablePrime(prime))
+                    goto selected;
+        }
+    }
+selected:
+    curve.h = 2;
+    curve.n = prime;
+    curve.b = B;
+    poly x[] = {1, 0, 0, 0};
+    solution.x = x;
+    solution.y = polysolve(B);
+    generator = pointdouble(solution); // Doubling will not be point at infinity
+    curve.P = generator;
+    return curve;
+}

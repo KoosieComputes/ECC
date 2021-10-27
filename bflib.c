@@ -166,3 +166,28 @@ poly *polysquare(poly *A)
     reduce(C);
     return C;
 }
+
+poly *polysolve(poly *A) // Only works if Tr(A) = 0
+{
+    int i;
+    poly *sum;
+    poly *sqr = copypoly(A, 4, "0");
+    for (i = 0; i <= (FIELD_SIZE - 1) / 2; i++)
+    {
+        sqr = polysquare(polysquare(sqr));
+        sum = polyadd(sum, sqr);
+    }
+    return sum;
+}
+
+int polytrace(poly *A)
+{
+    poly *t;
+    poly Tr[] = {0x1, 0, 0x10000000, 0};
+    poly one[] = {1, 0, 0, 0};
+    mpn_and_n(t, Tr, A, WORD_COUNT);
+    if (mpn_popcount(t, WORD_COUNT) == 1)
+        return 1;
+    else
+        return 0;
+}
