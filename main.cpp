@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 {
     int i;
     // poly *pC;
-    poly A[] = {0, 0, 0, 1};
+    // poly A[] = {0, 0, 0, 1};
     // poly t[] = {0x1, 0x1, 0, 0};
     // poly B[] = {0x3011, 0, 0, 0};
     // poly one[] = {1, 0, 0, 0};
@@ -22,13 +22,6 @@ int main(int argc, char const *argv[])
     // poly x[] = {0xf8f8eb7371fd558b, 0x5fef65bc391f8b36, 0x8313bb2139f1bb75, 0xfac9dfcbac};
     // poly y[] = {0x36716f7e01f81052, 0xbf8a0beff867a7ca, 0x03350678e58528be, 0x1006a08a419};
     // poly f[] = RPOLY;
-    cout << mpn_sizeinbase(A, WORD_COUNT, 2) << "\n";
-    int k = 233 - mpn_sizeinbase(A, WORD_COUNT, 2);
-    poly *Cshift = copyPoly(A, WORD_COUNT, '0');
-    cout << k << "\n";
-    mpn_lshift(Cshift, Cshift, WORD_COUNT, k);
-    printd(Cshift, 4);
-    cout << mpn_sizeinbase(Cshift, WORD_COUNT, 2) << "\n";
     // ZZ_p::init(ZZ(2) << 3);
     // ZZ_pX r = random_ZZ_pX(10);
     // ZZ_pE::init(r);
@@ -37,7 +30,6 @@ int main(int argc, char const *argv[])
     // cout << j;
     // ZZ_p::init(ZZ(2) << 2);
     // j = (j * 3) / 3;
-
     // poly b[] = {0x81FE115F7D8F90AD, 0x213B333B20E9CE42, 0x332C7F8C0923BB58, 0x66647EDE6C};
     // poly b[] = {0b10001, 0, 0, 0};
     // ZZ j = ZZ(1) << 233;
@@ -79,5 +71,13 @@ int main(int argc, char const *argv[])
     // cout << (4 * (ZZ(1) << 116)) << "\n";
     // cout << ((ZZ(1) << 200)) << "\n";
 
+    Domains EC;
+    EC = randomEC();
+    // poly *b = randomB();
+    // ZZ prime = (AGM(b) / 2);
+    // cout << prime << "\n";
+    // cout << ProbPrime(prime, 20) << "\n";
+    printd(EC.P.x, 4);
+    printd(EC.P.y, 4);
     return 0;
 }

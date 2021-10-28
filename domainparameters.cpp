@@ -6,7 +6,7 @@ int i;
 ZZ_pX p;
 ZZ_pXModulus P;
 ZZX p2;
-poly B[WORD_COUNT];
+// poly B[WORD_COUNT];
 
 poly hashfunc(poly x)
 {
@@ -40,6 +40,7 @@ ZZ AGM(poly *b)
         ZZX a = (lambda - 1) / 2;
         ZZX z0 = red(1 - a, ZZ(8));
         ZZX lam2 = (1 + lambda) / 2;
+        // cout << k << "\n";
         ZZX ivs = InvSqrt(lambda, z0, k - 1);
         lambda = MulMod(ivs, lam2, p2);
         lambda = red(lambda, ZZ(1) << k);
@@ -51,7 +52,6 @@ ZZ AGM(poly *b)
     tr = red(tr, ZZ(1) << (N - 1));
     ZZ t = resultant(p2, tr);
     t = -t % (ZZ(1) << (N - 1));
-    cout << t << "\n";
     if (sqr(t) > (ZZ(1) << (FIELD_SIZE + 2)))
         t -= (ZZ(1) << (N - 1));
 
@@ -90,7 +90,8 @@ ZZX InvSqrt(ZZX a, ZZX z0, int N)
     {
         int Np = ceil((N + 1.0) / 2);
         z = InvSqrt(a, z0, Np);
-        ZZX sqr = MulMod(z, z, p2);
+        // cout << "sqr\n";
+        ZZX sqr = SqrMod(z, p2);
         ZZX s = 1 - MulMod(a, sqr, p2);
         s = red(s, ZZ(1) << (N + 1));
         s /= 2;
@@ -140,10 +141,15 @@ ZZX polytoNTL(poly *b)
 
 poly *randomB()
 {
-    poly S = randnum();
-    B[0] = hashfunc(S) & 0x1FFFFFFFFFF;
-    for (i = 1; i < WORD_COUNT; i++)
-        B[i] = hashfunc(S + i);
+    // poly S = randnum();
+    // B[0] = hashfunc(S) & 0x1FFFFFFFFFF;
+    // for (i = 1; i < WORD_COUNT; i++)
+    //     B[i] = hashfunc(S + i);
+
+    poly *B = (poly *)malloc(sizeof(poly) * WORD_COUNT);
+    B[3] = randnum() & 0xFFFFFFFFFF;
+    for (i = 0; i < WORD_COUNT - 1; i++)
+        B[i] = randnum();
 
     return B;
 }
@@ -159,7 +165,7 @@ bool suitablePrime(ZZ p)
             break;
         }
     }
-    return vunerable;
+    return !vunerable;
 }
 
 // Probabalistic method, fails to map with probability 4^(-2^k) (k = 4/5 should be sufficient)
@@ -201,18 +207,25 @@ struct Domains randomEC()
     bool vunerable = false;
     poly *Btest;
     ZZ prime, N;
+    int count = 0;
     while (flags)
     {
         Btest = randomB();
-        while (polytrace(B) == 1) // y^2 + y = b (trace needs to be 0 for a solution)
+        // cout << mpn_sizeinbase(Btest, 4, 2) << "\n";
+        while (polytrace(Btest) == 1) // y^2 + y = b (trace needs to be 0 for a solution)
             Btest = randomB();
-        N = AGM(B);
-        if (divide(N, 2) == 1) // Cofactor needs to be 2 for Message representation on point.
+        // printd(Btest, 4);
+        N = AGM(Btest);
+        prime = N / 2; // Cofactor needs to be 2 for Message representation on point. N always even.
+        // cout << prime << "\n";
+        count++;
+        // cout << count << "\n";
+        cout << count << ": " << prime << "\n";
+        if (ProbPrime(prime, 20)) // Negligible probability for false positives 4^(-20)
         {
-            prime = N / 2;
-            if (ProbPrime(prime, 20)) // Negligible probability for false positives 4^(-20)
-                if (suitablePrime(prime))
-                    goto selected;
+            cout << "prime: " << prime << "\n";
+            if (suitablePrime(prime))
+                goto selected;
         }
     }
 selected:

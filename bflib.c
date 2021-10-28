@@ -183,9 +183,10 @@ poly *polysolve(poly *A) // Only works if Tr(A) = 0
 int polytrace(poly *A)
 {
     poly *t;
-    poly Tr[] = {0x1, 0, 0x10000000, 0}; // Not correct
+    poly *a = copyPoly(A, 4, '0');
+    poly Tr[] = {0x1, 0, 0x40000000, 0};
     poly one[] = {1, 0, 0, 0};
-    mpn_and_n(t, Tr, A, WORD_COUNT);
+    mpn_and_n(t, Tr, a, WORD_COUNT);
     if (mpn_popcount(t, WORD_COUNT) == 1)
         return 1;
     else
