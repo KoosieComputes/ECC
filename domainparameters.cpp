@@ -6,7 +6,7 @@ int i;
 ZZ_pX p;
 ZZ_pXModulus P;
 ZZX p2;
-poly b[WORD_COUNT];
+poly B[WORD_COUNT];
 
 poly hashfunc(poly x)
 {
@@ -141,11 +141,11 @@ ZZX polytoNTL(poly *b)
 poly *randomB()
 {
     poly S = randnum();
-    b[0] = hashfunc(S) & 0x1FFFFFFFFFF;
+    B[0] = hashfunc(S) & 0x1FFFFFFFFFF;
     for (i = 1; i < WORD_COUNT; i++)
-        b[i] = hashfunc(S + i);
+        B[i] = hashfunc(S + i);
 
-    return b;
+    return B;
 }
 
 bool suitablePrime(ZZ p)
@@ -162,19 +162,50 @@ bool suitablePrime(ZZ p)
     return vunerable;
 }
 
+// Probabalistic method, fails to map with probability 4^(-2^k) (k = 4/5 should be sufficient)
+struct ECP MessagePoint(poly *Message, Domains curve)
+{
+    ECP MP;
+    int k = 233 - mpn_sizeinbase(Message, WORD_COUNT, 2); // Message > 192
+    poly zero[] = EMPTY;
+    poly one[] = ONE;
+    poly *padM, *alpha, *tau, *lambda;
+    tau = copyPoly(zero, 4, '0');
+    mpn_lshift(padM, Message, WORD_COUNT, k - 1);
+    int r = 1 << k;
+    poly j = 0;
+    while (j < r)
+    {
+        tau[0] = j;
+        alpha = polyadd(padM, tau);
+        lambda = polyadd(polyadd(alpha, one), polydivide(polysquare(alpha), curve.b));
+        if ((polytrace(lambda) == 0) && (polytrace(alpha) == 1))
+            break;
+
+        j++;
+    }
+    if (j < r)
+    {
+        lambda = polysolve(lambda);
+        MP.x = alpha;
+        MP.y = polymult(alpha, lambda);
+    }
+    return MP;
+}
+
 struct Domains randomEC()
 {
     struct Domains curve;
     struct ECP generator, solution;
     bool flags = true;
     bool vunerable = false;
-    poly *B;
+    poly *Btest;
     ZZ prime, N;
     while (flags)
     {
-        B = randomB();
+        Btest = randomB();
         while (polytrace(B) == 1) // y^2 + y = b (trace needs to be 0 for a solution)
-            B = randomB();
+            Btest = randomB();
         N = AGM(B);
         if (divide(N, 2) == 1) // Cofactor needs to be 2 for Message representation on point.
         {
@@ -187,10 +218,10 @@ struct Domains randomEC()
 selected:
     curve.h = 2;
     curve.n = prime;
-    curve.b = B;
+    curve.b = Btest;
     poly x[] = {1, 0, 0, 0};
     solution.x = x;
-    solution.y = polysolve(B);
+    solution.y = polysolve(Btest);
     generator = pointdouble(solution); // Doubling will not be point at infinity
     curve.P = generator;
     return curve;

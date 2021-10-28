@@ -97,7 +97,7 @@ void reduce(poly *A)
     A[3] = A[3] & 0x1FFFFFFFFFF;
 }
 
-poly *polydivide(poly *A, poly *B)
+poly *polydivide(poly *A, poly *B) // Returns B/A
 {
     int i;
     poly f[] = RPOLY;
@@ -171,7 +171,7 @@ poly *polysolve(poly *A) // Only works if Tr(A) = 0
 {
     int i;
     poly *sum;
-    poly *sqr = copypoly(A, 4, "0");
+    poly *sqr = copyPoly(A, 4, '0');
     for (i = 0; i <= (FIELD_SIZE - 1) / 2; i++)
     {
         sqr = polysquare(polysquare(sqr));
@@ -183,7 +183,7 @@ poly *polysolve(poly *A) // Only works if Tr(A) = 0
 int polytrace(poly *A)
 {
     poly *t;
-    poly Tr[] = {0x1, 0, 0x10000000, 0};
+    poly Tr[] = {0x1, 0, 0x10000000, 0}; // Not correct
     poly one[] = {1, 0, 0, 0};
     mpn_and_n(t, Tr, A, WORD_COUNT);
     if (mpn_popcount(t, WORD_COUNT) == 1)

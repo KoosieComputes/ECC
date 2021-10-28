@@ -6,6 +6,15 @@
 
 #define SECURITY_LEVEL 200
 using namespace NTL;
+
+struct Domains
+{
+    poly *b;
+    ZZ n;
+    ZZ h;
+    struct ECP P;
+};
+
 poly hashfunc(poly x);
 poly randnum();
 poly *randomB();
@@ -16,11 +25,4 @@ void initialize();
 void initializeP();
 ZZ AGM(poly *b);
 ZZX red(ZZX a, ZZ modulus);
-
-struct Domains
-{
-    poly *b;
-    ZZ n;
-    ZZ h;
-    struct ECP P;
-};
+struct Domains randomEC();
