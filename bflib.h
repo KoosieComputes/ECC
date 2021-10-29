@@ -80,8 +80,7 @@ struct ECP
     poly *x;
     poly *y;
 };
-void invertPoint(struct ECP point);
+struct ECP invertPoint(struct ECP point);
 struct ECP pointadd(struct ECP P1, struct ECP P2);
 struct ECP pointdouble(struct ECP point);
 struct ECP pointmult(struct ECP point, poly *k);
-void initCurve(Domains DP);

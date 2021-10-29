@@ -44,6 +44,8 @@
         "variant": "c",
         "ios": "cpp",
         "iostream": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "bflib.h": "c",
+        "domainparameters.h": "c"
     }
 }

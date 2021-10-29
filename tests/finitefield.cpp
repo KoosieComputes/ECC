@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../bflib.h"
+// #include "../bflib.h"
+#include "../domainparameters.h"
 #define ARRAY(p)                         \
     for (int i = 0; i < WORD_COUNT; i++) \
         actual[i] = *(p + i);

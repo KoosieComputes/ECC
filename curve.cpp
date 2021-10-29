@@ -1,11 +1,19 @@
-#include "bflib.h"
+#include "domainparameters.h"
 
 poly a[] = ONE;
-poly b[] = {0x81fe115f7d8f90ad, 0x213b333b20e9ce42, 0x332c7f8c0923bb58, 0x66647ede6c};
+poly *b; //[] = {0x81FE115F7D8F90AD, 0x213B333B20E9CE42, 0x332C7F8C0923BB58, 0x66647EDE6C};
 
-void invertPoint(struct ECP point)
+void initCurve(poly *B)
 {
-    point.x = polyadd(point.x, point.y);
+    b = B;
+}
+
+struct ECP invertPoint(struct ECP point)
+{
+    struct ECP inverted;
+    inverted.x = point.x;
+    inverted.y = polyadd(point.x, point.y);
+    return inverted;
 }
 
 struct ECP pointadd(struct ECP P1, struct ECP P2)

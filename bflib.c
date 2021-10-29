@@ -170,9 +170,9 @@ poly *polysquare(poly *A)
 poly *polysolve(poly *A) // Only works if Tr(A) = 0
 {
     int i;
-    poly *sum;
     poly *sqr = copyPoly(A, 4, '0');
-    for (i = 0; i <= (FIELD_SIZE - 1) / 2; i++)
+    poly *sum = sqr;
+    for (i = 0; i < (FIELD_SIZE - 1) / 2; i++)
     {
         sqr = polysquare(polysquare(sqr));
         sum = polyadd(sum, sqr);
@@ -182,13 +182,9 @@ poly *polysolve(poly *A) // Only works if Tr(A) = 0
 
 int polytrace(poly *A)
 {
-    poly *t;
+    poly *t = (poly *)malloc(WORD_COUNT * sizeof(poly));
     poly *a = copyPoly(A, 4, '0');
-    poly Tr[] = {0x1, 0, 0x40000000, 0};
-    poly one[] = {1, 0, 0, 0};
+    poly Tr[] = {0x1, 0, 0x80000000, 0};
     mpn_and_n(t, Tr, a, WORD_COUNT);
-    if (mpn_popcount(t, WORD_COUNT) == 1)
-        return 1;
-    else
-        return 0;
+    return (mpn_popcount(t, WORD_COUNT) % 2);
 }

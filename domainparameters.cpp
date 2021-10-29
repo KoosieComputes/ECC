@@ -239,3 +239,28 @@ selected:
     curve.P = generator;
     return curve;
 }
+
+struct keypair Keygen(Domains EC)
+{
+    struct keypair kp;
+    kp.d = RandomBnd(EC.n);
+    kp.Q = pointmult(EC.P, (poly *)ZZ_limbs_get(kp.d));
+    return kp;
+}
+
+struct ciphertext Encrypt(Domains EC, ECP publicKey, ECP M)
+{
+    struct ciphertext c;
+    ZZ k = RandomBnd(EC.n);
+    c.C1 = pointmult(EC.P, (poly *)ZZ_limbs_get(k));
+    c.C2 = pointadd(M, pointmult(publicKey, (poly *)ZZ_limbs_get(k)));
+    return c;
+}
+
+struct ECP Decrypt(Domains EC, ZZ privateKey, ciphertext c)
+{
+    struct ECP M;
+    struct ECP DC1 = invertPoint(pointmult(c.C1, (poly *)ZZ_limbs_get(privateKey)));
+    M = pointadd(c.C2, DC1);
+    return M;
+}
