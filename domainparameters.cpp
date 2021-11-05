@@ -172,7 +172,7 @@ bool suitablePrime(ZZ p)
 struct ECP MessagePoint(poly *Message, Domains curve)
 {
     ECP MP;
-    int k = 233 - mpn_sizeinbase(Message, WORD_COUNT, 2); // Message > 192
+    int k = 9;
     poly zero[] = EMPTY;
     poly one[] = ONE;
     poly *padM, *alpha, *tau, *lambda;

@@ -63,6 +63,7 @@ static const unsigned long MortonTable[256] =
         0x5540, 0x5541, 0x5544, 0x5545, 0x5550, 0x5551, 0x5554, 0x5555};
 
 typedef unsigned long poly;
+typedef unsigned long element[4];
 poly *copyPoly(poly *A, short len, char size);
 poly *polyadd(poly *A, poly *B);
 poly *polymult(poly *A, poly *B);
