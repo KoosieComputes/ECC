@@ -22,9 +22,9 @@
     {              \
         1, 0, 0, 0 \
     }
-#define printd(C, len)          \
-    for (i = 0; i < len; i++)   \
-        printf("%lx \t", C[i]); \
+#define printd(C, len)              \
+    for (i = 0; i < len; i++)       \
+        printf("%lx \t", *(C + i)); \
     printf("\n");
 
 static const unsigned long MortonTable[256] =

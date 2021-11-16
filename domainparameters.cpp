@@ -177,8 +177,13 @@ struct ECP MessagePoint(poly *Message, Domains curve)
     poly one[] = ONE;
     poly *padM, *alpha, *tau, *lambda;
     tau = copyPoly(zero, 4, '0');
-    mpn_lshift(padM, Message, WORD_COUNT, k - 1);
-    int r = 1 << k;
+    alpha = copyPoly(zero, 4, '0');
+    lambda = copyPoly(zero, 4, '0');
+    padM = copyPoly(zero, 4, '0');
+    poly shape[] = {0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFF};
+    mpn_lshift(padM, Message, WORD_COUNT, 8);
+    mpn_and_n(padM, padM, shape, WORD_COUNT);
+    poly r = 1 << k;
     poly j = 0;
     while (j < r)
     {

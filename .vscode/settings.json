@@ -46,6 +46,8 @@
         "iostream": "cpp",
         "cmath": "cpp",
         "bflib.h": "c",
-        "domainparameters.h": "c"
+        "domainparameters.h": "c",
+        "__locale": "cpp",
+        "any": "cpp"
     }
 }
